@@ -3,12 +3,14 @@
 
 utils::install.packages("DatabaseConnector")
 utils::install.packages("remotes")
+utils::install.packages("DBI")
 remotes::install_github("OHDSI/DataQualityDashboard")
 remotes::install_github("OHDSI/Achilles")
 remotes::install_github("OHDSI/DbDiagnostics")
 
 
 library(DatabaseConnector)
+library(DBI)
 library(DataQualityDashboard)
 library(Achilles)
 library(DbDiagnostics)
@@ -50,21 +52,20 @@ vocabulary_schema <- "vocabulary"
 
 
 #Connecting to local database using connection object
-con <- dbConnect(drv = RPostgres::Postgres(),
-                 dbname = database_name, 
-                 host = 'localhost', 
-                 port = 5432, 
-                 user = 'postgres',
-                 password = Sys.getenv("postgres_password")
-                 #password = rstudioapi::askForPassword("Database password")
-                 )
+con <- DBI::dbConnect(drv = RPostgres::Postgres(),
+                      dbname = database_name, 
+                      host = 'localhost', 
+                      port = 5432, 
+                      user = 'postgres',
+                      password = Sys.getenv("postgres_password")
+                      )
 print(con) 
 
 # Create a new schema
 query <- paste0("CREATE SCHEMA IF NOT EXISTS ", network_results_schema, ";")
 
 # Execute the query
-out <- dbExecute(con, query)
+out <- DBI::dbExecute(con, query)
 
 DBI::dbDisconnect(con)
 
