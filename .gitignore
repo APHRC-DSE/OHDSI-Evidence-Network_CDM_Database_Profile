@@ -1,0 +1,23 @@
+# Rhistory
+*.Rhistory
+
+# Rdata files
+*.RData
+
+# rds files
+*.rds
+
+# sav files
+*.sav
+
+# dta files
+*.dta
+
+# csv files
+*.csv
+
+# text files
+*.txt
+
+# folders
+Evidence_Network/*
