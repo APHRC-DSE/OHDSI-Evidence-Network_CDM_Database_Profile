@@ -1,24 +1,35 @@
 ################################################################################
-#1.Installing Required packages
+#1.Installing and Load Required packages
 
-#utils::install.packages("DatabaseConnector")
-#utils::install.packages("remotes")
-#remotes::install_github("OHDSI/DataQualityDashboard")
-##remotes::install_github("OHDSI/Achilles")
-#remotes::install_github("OHDSI/DbDiagnostics")
+utils::install.packages("DatabaseConnector")
+utils::install.packages("remotes")
+remotes::install_github("OHDSI/DataQualityDashboard")
+remotes::install_github("OHDSI/Achilles")
+remotes::install_github("OHDSI/DbDiagnostics")
 
-#options(rstudio.connectionObserver.errorsSuppressed = TRUE)
+
+library(DatabaseConnector)
+library(DataQualityDashboard)
+library(Achilles)
+library(DbDiagnostics)
+source("helperfuns_executeDbProfile_new.R")
 
 ################################################################################
 #2.Store password credentials in .Renviron
 
-#utils::file.edit("~/.Renviron") 
+##Why an env var and not a plain password string: so the password never
+##appears in this script or in anything committed/shared alongside it.
 
-################################################################################
-#3.Setup
+##store password credentials for postgres in .Renviron and retrieve with Sys.getenv()
+
+#utils::file.edit("~/.Renviron")
+#usethis::edit_r_environ() 
 
 ### Restart R
 #.rs.restartR()
+
+################################################################################
+#3.Setup
 
 ### Start with a clean environment by removing objects in workspace
 rm(list=ls())
@@ -29,16 +40,7 @@ working_directory <- base::setwd(dirname(rstudioapi::getActiveDocumentContext()$
 working_directory
 
 ################################################################################
-#3.Load Required packages
-
-library(DatabaseConnector)
-library(DataQualityDashboard)
-library(Achilles)
-library(DbDiagnostics)
-source("helperfuns_executeDbProfile_new.R")
-
-################################################################################
-#3.Create Network result Schema
+#4.Create Network result Schema
 
 database_name <- "omop"
 cdm_schema <- "nih_tb_cdm"
@@ -67,11 +69,14 @@ out <- dbExecute(con, query)
 DBI::dbDisconnect(con)
 
 ################################################################################
-#4. Database Profile
+#5. Database Profile
 
 ## Path to jdbc drivers
 driver_path <- base::file.path(working_directory, "JDBC Driver postgresql")
 output_folder <- base::file.path(working_directory, "Evidence_Network") #create output folder for individual studies
+
+# Turn off the connection pane to speed up run time
+#options(connectionObserver = NULL)
 
 ## Create connection to database
 cd_evdnet <- DatabaseConnector::createConnectionDetails(
