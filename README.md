@@ -33,4 +33,4 @@ from the **OhdsiSharing** R package. More details about how to share the databas
 
 ## Run
 
-After cloning the repository or downloading the ZIP, Open `main.Rmd` and run from the beginning.
+After cloning the repository or downloading the ZIP, Open `main.R` and run from the beginning.
